@@ -5,7 +5,8 @@ const app = express();
 const authRouter = require('./routes/authrouter');
 const userrouter = require('./routes/userrouter');
 const adminrouter = require('./routes/adminrouter');
-const {adminmiddleware, usermiddleware} = require('./middlewares/rolemiddleware');
+const vendorrouter = require('./routes/vendorrouter');
+const {adminmiddleware, usermiddleware,vendorMiddleware} = require('./middlewares/rolemiddleware');
 const mongodbconfig = require('./config/mongodbconfig');
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./docs/swagger");
@@ -23,6 +24,9 @@ app.use(
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user',usermiddleware, userrouter);
 app.use('/api/v1/admin',adminmiddleware, adminrouter);
+// app.use('/api/v1/vendor',vendorMiddleware, vendorrouter);
+app.use('/api/v1/vendor', vendorrouter);
+
 
 
 const PORT = process.env.PORT || 5000;
