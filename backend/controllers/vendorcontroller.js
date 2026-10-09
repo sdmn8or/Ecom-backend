@@ -26,7 +26,10 @@ let craetecategory = async (req, res) => {
 }
 
 let getallcategory = async (req, res) => {
-    let data = await Cat.find({}).populate("owner").select('-password');
+    let data = await Cat.find({}).populate({
+        path: 'owner',
+        select: '-password'
+    });
 
     res.status(200).json({
         success: true,
@@ -126,6 +129,8 @@ const craetesubcategory = async (req, res) => {
         parentcategory: parentcategory
     });
 
+    let catupdate = await Cat.findByIdAndUpdate({_id:parentcategory},{ $push: { subcategories: subcategory._id } });
+
     await subcategory.save();
 
     res.status(201).json({
@@ -155,18 +160,26 @@ let getallcategorywisesubcategory = async (req, res) => {
 
 let getallownerwisecategory = async (req,res) =>{
     let {id} = req.params
-    let data = await Cat.find({owner:id});
+    let data = await Cat.find({owner:id}).populate('subcategories');
 
-    console.log(data);
-    data.map(async(item)=>{
-        let subcategories = await subcat.find({parentcategory:item._id});
-        console.log(subcategories);
-    });
+    // let cat = []
 
-    // res.status(200).json({
-    //     success: true,
-    //     data: data
+    // console.log(data);
+    // data.map(async(item)=>{
+    //     let subcategories = await subcat.find({parentcategory:item._id});
+        
+    //     let data = {
+    //         ...item,
+    //         subcategories:subcategories
+    //     }
+
+    //     cat.push(data)
     // });
+
+    res.status(200).json({
+        success: true,
+        data: data
+    });
 }
 
 module.exports = {craetecategory, getallcategory, updateCategory, deleteCategory, craetesubcategory, getallsubcategory,getallcategorywisesubcategory,getallownerwisecategory};
